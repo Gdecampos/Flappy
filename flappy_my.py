@@ -37,7 +37,7 @@ class bird:
         self.heigt = self.y
         self.time = 0
         self.image_serial = 0
-        self.image = imgs[0]
+        self.image = self.imgs[0]
         
     def jump(self):
         self.speed = -10.5
@@ -59,11 +59,37 @@ class bird:
         # movimentando o passaro
         self.y += movement
         
-        #angulo do passaro
+        # angulo do passaro
         if movement < 0 or self.y < (self.heigt + 50):
-            
+            if self.angle < self.max_rotation:
+                self.angle = self.max_rotation
         
-    pass
+        else:
+            if self.angle > -90:
+                self.angle -= self.rotation_speed
+        
+    def art(self):
+        # definindo a ordem das imagens para animação do bater de asas
+        self.image_serial +=1
+        
+        # asas descendo
+        if self.image_serial < self.animation_time:
+            self.image = self.imgs[0]
+        elif self.image_serial < self.animation_time*2:
+            self.image = self.imgs[1]
+        elif self.image_serial < self.animation_time*3:
+            self.image = self.imgs[2]
+            
+        # asas subindo
+        elif self.image_serial < self.animation_time*4:
+            self.image = self.imgs[1]
+        elif self.image_serial < self.animation_time*4 + 1:
+            self.image = self.imgs[0]
+            self.image_serial = 0   # reiniciando a animação para o ponto inicial
+        
+        # se o passaro estiver caindo eu não vou bater asa
+        
+        # desenhar a imagem
 
 class pipe:
     pass
