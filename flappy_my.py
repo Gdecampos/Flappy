@@ -68,7 +68,7 @@ class bird:
             if self.angle > -90:
                 self.angle -= self.rotation_speed
         
-    def art(self):
+    def art(self, screen):
         # definindo a ordem das imagens para animação do bater de asas
         self.image_serial +=1
         
@@ -87,9 +87,16 @@ class bird:
             self.image = self.imgs[0]
             self.image_serial = 0   # reiniciando a animação para o ponto inicial
         
-        # se o passaro estiver caindo eu não vou bater asa
+        # caso pule enquanto cai inicia o bater de asas
+        if self.angle <= -80:
+            self.image = self.imgs[1]
+            self.image_serial = self.animation_time*2 
         
-        # desenhar a imagem
+        # exibição do passaro na tela
+        rotate_image = pygame.transform.rotate(self.image, self.angle) # faz a imagem girar de acordo com o angulo
+        img_center = self.image.get_rect(topleft=(self.x, self.y)).center # define o centro da imagem
+        box = rotate_image.get_rect(center=img_center) # get_rect() cria um retangulo 'hit box' em torno da imagem
+        screen.blit(rotate_image, box.topleft) # .blit serve para mostrar imagem na tela do pygame
 
 class pipe:
     pass
