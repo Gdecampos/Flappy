@@ -68,7 +68,7 @@ class bird:
             if self.angle > -90:
                 self.angle -= self.rotation_speed
         
-    def art(self, screen):
+    def sketch(self, screen):
         # definindo a ordem das imagens para animação do bater de asas
         self.image_serial +=1
         
@@ -123,7 +123,7 @@ class pipe:
     def move_pipe(self):
         self.x -= self.pipe_speed # Movimenta os canos da direita para esquerda (movimento negativo)
         
-    def draw_pipe(self, screen):
+    def sketch(self, screen):
         screen.blit(self.upper_pipe, (self.x, self.upper_position))
         screen.blit(self.bottom_pipe, (self.x, self.bottom_position))
         
@@ -167,7 +167,20 @@ class ground:
         if self.x2 + self.ground_width < 0:
             self.x2 = self.x2 + self.ground_width
             
-    def draw_ground(self, screen):
+    def sketch(self, screen):
         screen.blit(self.image, (self.x1, self.y))
         screen.blit(self.image, (self.x2, self.y))
         
+def screen_sketch(screen, birds, pipes, ground, score):
+    screen.blit(background_skin, (0, 0))
+    # As funções estão no plural para serem usadas em diversos objetos na tela ao mesmo tempo
+    for bird in birds:
+        bird.sketch(screen)
+        
+    for pipe in pipes:
+        pipe.sketch(screen)
+        
+    text = score_font.render(f"Score: {score}", 1, (50,50,50)) 
+    screen.blit(text, (screen_width - 10 - text.get_width(), 10))
+    ground.sketch(screen)
+    pygame.display.update()
