@@ -146,4 +146,28 @@ class pipe:
             return False
 
 class ground:
-    pass
+    speed = 5
+    ground_width = ground_skin.get_width()
+    image = ground_skin
+    
+    def __init__(self, y):
+        self.y = y
+        self.x1 = 0
+        self.x2 = self.ground_width
+        
+    def move(self):
+        # Movimenta o chão da direita para esquerda
+        self.x1 -= self.speed
+        self.x2 -= self.speed
+        
+        # Caso um dos chãos chegue ao fim da tela o envia para trás do próximo chão (cria um efeito carrocel)
+        if self.x1 + self.ground_width < 0:
+            self.x1 = self.x1 + self.ground_width
+            
+        if self.x2 + self.ground_width < 0:
+            self.x2 = self.x2 + self.ground_width
+            
+    def draw_ground(self, screen):
+        screen.blit(self.image, (self.x1, self.y))
+        screen.blit(self.image, (self.x2, self.y))
+        
