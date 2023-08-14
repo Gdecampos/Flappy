@@ -98,8 +98,52 @@ class bird:
         box = rotate_image.get_rect(center=img_center) # get_rect() cria um retangulo 'hit box' em torno da imagem
         screen.blit(rotate_image, box.topleft) # .blit serve para mostrar imagem na tela do pygame
 
+    def get_mask(self):
+        pygame.mask.from_surface(self.image) # pega a mascara do passaro
+
 class pipe:
-    pass
+    distance = 200 # Define a distancia entre o cano superior e inferior
+    pipe_speed = 5 # Define velocidade do cano
+    
+    def __init__(self, x):
+        self.x = x
+        self.height_pipe = 0
+        self.upper_position = 0
+        self.bottom_position = 0
+        self.upper_pipe = pygame.transform.flip(pipe_skin, False, True) # pygame.transform.flip(image_name, X axis[T,F], Y axis[T,F]) gira a imagem 
+        self.bottom_pipe = pipe_skin
+        self.trespass = False
+        self.set_height()
+        
+    def set_height(self):
+        self.height_pipe = random.randrange(50, 450) # random.randrange(min, max) Define um limite no centro da tela para criação dos canos
+        self.upper_position = self.height_pipe - self.upper_pipe.get_height() # define o cano para cima a partir do ponto definido no self.height_pipe
+        self.bottom_position = self.height_pipe + self.distance # define o cano para baixo a partir do ponto definido no self.height_pipe mais a distancia entre os canos definida na variavel "distance"
+        
+    def move_pipe(self):
+        self.x -= self.pipe_speed # Movimenta os canos da direita para esquerda (movimento negativo)
+        
+    def draw_pipe(self, screen):
+        screen.blit(self.upper_pipe, (self.x, self.upper_position))
+        screen.blit(self.bottom_pipe, (self.x, self.bottom_position))
+        
+    def collision(self, bird):
+        bird_mask = bird.get_mask() # Executa a def "get_mask" dentro da class "bird"
+        upper_mask = pygame.mask.from_surface(self.upper_pipe) # Pega a mask do cano superior
+        bottom_mask = pygame.mask.from_surface(self.bottom_pipe)
+        
+        # Calculo da distancia entre a mask do passaro e a mask dos canos
+        upper_distance = (self.x - bird.x, self.upper_position - round(bird.y)) # Usado round na variavel bird.y pois a posição pode ser de numeros quebrados
+        bottom_distance = (self.x - bird.x, self.bottom_position - round(bird.y))
+        
+        upper_colide = bird_mask.overlap(upper_mask, upper_distance)
+        bottom_colide = bird_mask.overlap(bottom_mask, bottom_distance) # A função ".overlap(oobjeto A, objeto B)" averigua se os objetos A e B estão sobrepostos e retorna "True / False"
+        
+        # Averiguando se ouve colisão com os canos
+        if upper_colide or bottom_colide:
+            return True
+        else:
+            return False
 
 class ground:
     pass
