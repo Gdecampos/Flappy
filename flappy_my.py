@@ -184,3 +184,57 @@ def screen_sketch(screen, birds, pipes, ground, score):
     screen.blit(text, (screen_width - 10 - text.get_width(), 10))
     ground.sketch(screen)
     pygame.display.update()
+    
+def main():
+    birds = [bird(230, 350)]
+    ground = ground(730)
+    pipes = [pipe(700)]
+    screen = pygame.display.set_mode((screen_width, screen_height))
+    score = 0
+    clock = pygame.time.Clock()
+    
+    runing = True
+    while runing:
+        clock.tick(40) # .tick define o frame rate
+        
+        # Interações com o usuário
+        for event in pygame.event.get(): # Verifica se o botão de fechar foi clicado
+            if event.type == pygame.QUIT:
+                runing = False
+                pygame.quit()
+                quit()
+            
+            if event.type == pygame.KEYDOWN: # Acionado quando uma tecla for pressionada
+                if event.key == pygame.K_SPACE: # Verifica se a tecla pressionada foi o espaço
+                    for bird in birds:
+                        bird.jump()
+        
+        # Movimenta os objetos em tela
+        for bird in birds:
+            bird.move()
+        ground.move()
+        
+        pipe_add = False
+        pipe_remove = []
+        for pipe in pipes:
+            for i, bird in enumerate(birds): 
+                if pipe.collide(bird):  # Verifica se houve colisão entre o cano e o passaro
+                    birds.pop(i)    # Remove o passaro que colidiu da lista de passaros
+                if not pipe.trespass and bird.x > pipe.x: # Analisa se o passaro passou do cano
+                    pipe.trespass = True
+                    pipe_add = True 
+            pipe.move()
+            if pipe.x + pipe.upper_pipe.get_width() < 0: # Verifica se o cano já saiu por completo da tela
+                pipe_remove.append(pipe) # Adiciona o cano em uma lista para remoção
+                
+        if pipe_add:
+            score += 1
+            pipe.append(pipe(600))
+        for pipe in pipe_remove:
+            pipes.remove(pipe)
+        
+        for i, bird in enumerate(birds):
+            if (bird.y + bird.image.get_height()) > ground.y or bird.y < 0:
+                birds.pop(i)
+            
+        screen_sketch(screen, birds, pipes, ground, score)
