@@ -180,7 +180,7 @@ def screen_sketch(screen, bird, pipes, ground, score):
     for pipe in pipes:
         pipe.sketch(screen)
         
-    text = score_font.render(f"{score} and {Pipe.speed}", 1, (50,50,50)) 
+    text = score_font.render(f"{score}", 1, (50,50,50)) 
     screen.blit(text, (screen_width/2  - text.get_width()/2, 10))
     ground.sketch(screen)
     pygame.display.update()
@@ -190,7 +190,7 @@ def main():
     ground = Ground(730)
     pipes = [Pipe(700)]
     screen = pygame.display.set_mode((screen_width, screen_height))
-    score = 9
+    score = 0
     clock = pygame.time.Clock()
     lost = False
     runing = True
@@ -233,12 +233,12 @@ def main():
                 
         if pipe_add: # Função para adicionar mais canos
             pipes.append(Pipe(650))     # Adiciona mais uma dupla de canos ao fim da tela     
-            if score % 10 == 0 and score != 0: # Acada 10 pontos aumenta a velocidade em 1
+            if score % 10 == 0 and score != 0: # A cada 10 pontos aumenta a velocidade em 1
                 Pipe.speed += 1 
                 Ground.speed += 1
             score += 1
             
-        for pipe in pipe_remove:
+        for pipe in pipe_remove: # Remove os canos ao chegar ao fim da tela
             pipes.remove(pipe)
         
         if (bird.y + bird.image.get_height()) > ground.y or bird.y < 0:
